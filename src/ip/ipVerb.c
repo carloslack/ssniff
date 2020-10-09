@@ -1,24 +1,24 @@
 /*
  * ipVerb.c
  *
-*/ 
+*/
 #include "../main.h"
 
 void *ipVerb()
 {
     struct  iphdr       *iph;
-    struct  tcphdr		*tcph;
+    struct  tcphdr      *tcph;
     struct  udphdr      *udph;
     struct  icmphdr     *icmph;
     struct  igmp        *igmph;
-    struct  sockaddr_in	sin;
+    struct  sockaddr_in sin;
     struct  user_data   *udata;
 
-    socklen_t		sock, socksize;
-    unsigned int	len;
-    char 			buff[BUFFSIZE], str[INET_ADDRSTRLEN];
+    socklen_t       sock, socksize;
+    unsigned int    len;
+    char            buff[BUFFSIZE], str[INET_ADDRSTRLEN];
     const char      *data;
-    register long	i;
+    register long   i;
 
     len = sizeof(sin);
     data = NULL;
@@ -41,18 +41,18 @@ void *ipVerb()
         if(socksize > 0)
         {
             iph = (struct iphdr *)(buff + sizeof(struct ethhdr));
-            tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
-            udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
-            icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
-            igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
+            tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
 
             switch(iph->protocol)
             {
-                case IPPROTO_TCP:	break;
-                case IPPROTO_UDP:	break;
-                case IPPROTO_ICMP:	break;
-                case IPPROTO_IGMP:	break;
-                default:			continue;
+                case IPPROTO_TCP:   break;
+                case IPPROTO_UDP:   break;
+                case IPPROTO_ICMP:  break;
+                case IPPROTO_IGMP:  break;
+                default:            continue;
             }
 
             if(udata->protocol)
@@ -64,15 +64,15 @@ void *ipVerb()
                 udata->dstport = 0;
             }
 
-            for(i=0; i < udata->ipsrc_l.len && i < MAXIPS; i++) 
+            for(i=0; i < udata->ipsrc_l.len && i < MAXIPS; i++)
             {
                 if(udata->ipsrc_l.len > 0)
                 {
                     if(!strcmp( inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),udata->ipsrc_l.ips[i]))
-                    { 
+                    {
                         i = MAXIPS + 1;
                         break;
-                    }    
+                    }
                 }
             } if(i <= MAXIPS && udata->ipsrc_l.len > 0) continue;
 
@@ -84,8 +84,8 @@ void *ipVerb()
                     {
                         i = MAXIPS + 1;
                         break;
-                    }    
-                }        
+                    }
+                }
 
             } if(i <= MAXIPS && udata->ipdst_l.len > 0) continue;
 
@@ -95,32 +95,32 @@ void *ipVerb()
                 {
                     switch(udata->protocol)
                     {
-                        case IPPROTO_TCP: 	if(htons(tcph->source) != atoi(udata->sport_l.ports[i]))
+                        case IPPROTO_TCP:   if(htons(tcph->source) != atoi(udata->sport_l.ports[i]))
                                                 continue;
                                             break;
-                        case IPPROTO_UDP:	if(htons(udph->source) != atoi(udata->sport_l.ports[i]))
+                        case IPPROTO_UDP:   if(htons(udph->source) != atoi(udata->sport_l.ports[i]))
                                                 continue;
                                             break;
-                        default:			break;
+                        default:            break;
                     }
                     i = MAXPORTS + 1;
                     break;
-                }        
+                }
             } if(i <= MAXPORTS && udata->sport_l.len > 0) continue;
 
-            for(i=0; i< udata->dport_l.len && i < MAXPORTS; i++) 
+            for(i=0; i< udata->dport_l.len && i < MAXPORTS; i++)
             {
                 if(udata->dport_l.len > 0)
                 {
                     switch(udata->protocol)
                     {
-                        case IPPROTO_TCP:	if(htons(tcph->dest) != atoi(udata->dport_l.ports[i]))
+                        case IPPROTO_TCP:   if(htons(tcph->dest) != atoi(udata->dport_l.ports[i]))
                                                 continue;
                                             break;
-                        case IPPROTO_UDP:	if(htons(udph->dest) != atoi(udata->dport_l.ports[i]))
+                        case IPPROTO_UDP:   if(htons(udph->dest) != atoi(udata->dport_l.ports[i]))
                                                 continue;
                                             break;
-                        default:			break;
+                        default:            break;
                     }
                     i = MAXPORTS + 1;
                     break;

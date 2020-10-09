@@ -40,7 +40,7 @@ void bye();
 
 #define CTRL_C_HANDLER     signal(SIGINT,(void*)bye);
 
-enum 
+enum
 {
     MIN_PORT=1,
     MAX_PORT=65535,
@@ -67,8 +67,8 @@ typedef struct mac_list
 
 typedef struct port_list
 {
-    char		**ports;
-    unsigned int	len;
+    char    **ports;
+    unsigned int    len;
 }portlist_t;
 
 struct user_data

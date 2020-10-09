@@ -37,15 +37,15 @@ int main(int argc, char **argv)
 
         switch(verbose_flag)
         {
-            case 0:		programUsage(argv[0]);	
+            case 0:     programUsage(argv[0]);
                         break;
-            case 1:		who = 1;
+            case 1:     who = 1;
                         break;
-            case 2:		who = 2;
+            case 2:     who = 2;
                         break;
-            case 3:		who = 3;
+            case 3:     who = 3;
                         break;
-            default:	who = 0;
+            default:    who = 0;
                         break;
         }
     }
@@ -64,12 +64,12 @@ int main(int argc, char **argv)
                     break;
             case 1: ipVerb();
                     break;
-            case 2:	ipShort();
+            case 2: ipShort();
                     break;
-            case 3:	dataDump();
+            case 3: dataDump();
                     break;
             default:break;
         }
-    }	
+    }
     return 0;
-}    
+}

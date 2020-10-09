@@ -84,11 +84,11 @@ void Iface(char **iface, void *which)
 
     switch(x)
     {
-        case 1:		
+        case 1:	
             setIface((char*)iface);
             break;
 
-        default:	quitNow();
+        default:    quitNow();
                     break;
     }
 }

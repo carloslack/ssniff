@@ -89,7 +89,7 @@ void *ipReg()
 
             } if(i <= MAXIPS && udata->ipdst_l.len > 0) continue;
 
-            for(i=0; i< udata->sport_l.len && i < MAXPORTS; i++) 
+            for(i=0; i< udata->sport_l.len && i < MAXPORTS; i++)
             {
                 if(udata->sport_l.len > 0)
                 {
@@ -129,9 +129,9 @@ void *ipReg()
 
             switch(iph->protocol)
             {
-                case IPPROTO_TCP:	printf("\n[ip]: protocol:0x%02x (%d TCP)\n",iph->protocol, (int)iph->protocol);
-                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(tcph->source));	
-                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(tcph->dest));	
+                case IPPROTO_TCP:   printf("\n[ip]: protocol:0x%02x (%d TCP)\n",iph->protocol, (int)iph->protocol);
+                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(tcph->source));
+                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(tcph->dest));
                                     printf("[ip]: ihl:%u ",iph->ihl);
                                     printf("version:%u ",iph->version);
                                     printf("tos:0x%02x ",iph->tos);
@@ -158,8 +158,8 @@ void *ipReg()
                                     break;
 
                 case IPPROTO_UDP:   printf("\n[ip]: protocol:0x%02x (%d UDP)\n",iph->protocol,(int)iph->protocol);
-                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(udph->source));	
-                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(udph->dest));	
+                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(udph->source));
+                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(udph->dest));
                                     printf("[ip]: ihl:%u ",iph->ihl);
                                     printf("version:%u ",iph->version);
                                     printf("tos:0x%02x ",iph->tos);
@@ -174,9 +174,9 @@ void *ipReg()
                                     printf("check:0x%04x\n",udph->check & 0xffff);
                                     break;
 
-                case IPPROTO_ICMP:	printf("\n[ip]: protocol:0x%02x (%d ICMP)\n",iph->protocol,(int)iph->protocol);
-                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(udph->source));	
-                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(udph->dest));	
+                case IPPROTO_ICMP:  printf("\n[ip]: protocol:0x%02x (%d ICMP)\n",iph->protocol,(int)iph->protocol);
+                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(udph->source));
+                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(udph->dest));
                                     printf("[ip]: ihl:%u ",iph->ihl);
                                     printf("version:%u ",iph->version);
                                     printf("tos:0x%02x ",iph->tos);
@@ -192,9 +192,9 @@ void *ipReg()
                                     printf("sequence: %u\n",htons(icmph->un.echo.sequence));
                                     break;
 
-                case IPPROTO_IGMP:	printf("\n[ip]: protocol:0x%02x (%d IGMP)\n",iph->protocol,(int)iph->protocol);
-                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(udph->source));	
-                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(udph->dest));	
+                case IPPROTO_IGMP:  printf("\n[ip]: protocol:0x%02x (%d IGMP)\n",iph->protocol,(int)iph->protocol);
+                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(udph->source));
+                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(udph->dest));
                                     printf("[ip]: ihl:%u ",iph->ihl);
                                     printf("version:%u ",iph->version);
                                     printf("tos:0x%02x ",iph->tos);
@@ -203,7 +203,7 @@ void *ipReg()
                                     printf("frag_off:%u ",iph->frag_off);
                                     printf("checksum:0x%04x ",iph->check & 0xffff);
                                     printf("ttl:%d\n",(int)iph->ttl);
-                                    printf("[igmp]: type:%u ",igmph->igmp_type); 
+                                    printf("[igmp]: type:%u ",igmph->igmp_type);
                                     printf("code:%u ",igmph->igmp_code); 
                                     printf("checksum:0x%04x\n",igmph->igmp_cksum & 0xffff);
                                     break;

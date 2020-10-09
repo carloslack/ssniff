@@ -39,7 +39,7 @@ void setIp(char *ip, int sd)
 
     switch(sd)
     {
-        case 0:		if( (cnt = strcnt(ip, ',')+1) > MAXIPS)
+        case 0:     if( (cnt = strcnt(ip, ',')+1) > MAXIPS)
                     {
                         fprintf(stderr,"Argument too long: Maximum IPs allowed is: %d.\n",MAXIPS);
                         exit(EXIT_FAILURE);
@@ -48,7 +48,7 @@ void setIp(char *ip, int sd)
                     udata->ipsrc_l.len = cnt;
                     verifyData(0, &udata->ipsrc_l);
                     break;
-        case 1: 	if( (cnt = strcnt(ip, ',')+1) > MAXIPS)
+        case 1:     if( (cnt = strcnt(ip, ',')+1) > MAXIPS)
                     {
                         fprintf(stderr,"Argument too long: Maximum IPs allowed is: %d.\n",MAXIPS);
                         exit(EXIT_FAILURE);
@@ -57,38 +57,38 @@ void setIp(char *ip, int sd)
                     udata->ipdst_l.len = cnt;
                     verifyData(0, &udata->ipdst_l);
                     break;
-        default:	break;
+        default:    break;
     }
 }
 
 void setPort(char *port, int sd)
 {
-	struct  user_data   *udata;
-	udata = &user_data_t;
+    struct  user_data   *udata;
+    udata = &user_data_t;
 
-	unsigned int cnt;
+    unsigned int cnt;
 
-	switch(sd)
-	{
-		case 0:		if( (cnt = strcnt(port, ',')+1) > MAXPORTS)
-					{
-						fprintf(stderr,"Argument too long: Maximum PORTs allowed is: %d.\n",MAXPORTS);
-						exit(EXIT_FAILURE);
-					}
-					udata->sport_l.ports = strsplt(port,',');
-					udata->sport_l.len = cnt;
-					verifyData(1, &udata->sport_l);
-					break;
-		case 1:		if( (cnt = strcnt(port, ',')+1) > MAXPORTS)
-					{
-						fprintf(stderr,"Argument too long: Maximum PORTs allowed is: %d.\n",MAXPORTS);
-						exit(EXIT_FAILURE);
-					}
-					udata->dport_l.ports = strsplt(port,',');
-					udata->dport_l.len = cnt;
-					verifyData(1, &udata->dport_l);
-					break;
-		default:	break;
-	}
+    switch(sd)
+    {
+        case 0:     if( (cnt = strcnt(port, ',')+1) > MAXPORTS)
+                    {
+                        fprintf(stderr,"Argument too long: Maximum PORTs allowed is: %d.\n",MAXPORTS);
+                        exit(EXIT_FAILURE);
+                    }
+                    udata->sport_l.ports = strsplt(port,',');
+                    udata->sport_l.len = cnt;
+                    verifyData(1, &udata->sport_l);
+                    break;
+        case 1:     if( (cnt = strcnt(port, ',')+1) > MAXPORTS)
+                    {
+                        fprintf(stderr,"Argument too long: Maximum PORTs allowed is: %d.\n",MAXPORTS);
+                        exit(EXIT_FAILURE);
+                    }
+                    udata->dport_l.ports = strsplt(port,',');
+                    udata->dport_l.len = cnt;
+                    verifyData(1, &udata->dport_l);
+                    break;
+        default:    break;
+    }
 }
 

@@ -16,5 +16,3 @@
 #define DEVICE "eth0"
 #define DEVLEN  5
 
-char *giface;
-unsigned int on = 0;

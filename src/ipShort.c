@@ -1,17 +1,17 @@
 /*
- * dataDump.c
+ * ipShort.c
  *
 */
-#include "../main.h"
+#include "main.h"
 
-void *dataDump()
+void *ipShort()
 {
     struct  iphdr       *iph;
     struct  tcphdr      *tcph;
     struct  udphdr      *udph;
     struct  icmphdr     *icmph;
     struct  igmp        *igmph;
-    struct  sockaddr_in sin;
+    struct  sockaddr_in	sin;
     struct  user_data   *udata;
 
     socklen_t       sock, socksize;
@@ -41,10 +41,10 @@ void *dataDump()
         if(socksize > 0)
         {
             iph = (struct iphdr *)(buff + sizeof(struct ethhdr));
-            tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
-            udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
-            icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
-            igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
+            tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
 
             switch(iph->protocol)
             {
@@ -64,11 +64,11 @@ void *dataDump()
                 udata->dstport = 0;
             }
 
-            for(i=0; i < udata->ipsrc_l.len && i < MAXIPS; i++) 
+            for(i=0; i < udata->ipsrc_l.len && i < MAXIPS; i++)
             {
                 if(udata->ipsrc_l.len > 0)
                 {
-                    if(!strcmp( inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),udata->ipsrc_l.ips[i]))
+                    if(strcmp( inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),udata->ipsrc_l.ips[i]))
                     {
                         i = MAXIPS + 1;
                         break;
@@ -89,7 +89,7 @@ void *dataDump()
 
             } if(i <= MAXIPS && udata->ipdst_l.len > 0) continue;
 
-            for(i=0; i< udata->sport_l.len && i < MAXPORTS; i++) 
+            for(i=0; i< udata->sport_l.len && i < MAXPORTS; i++)
             {
                 if(udata->sport_l.len > 0)
                 {
@@ -127,32 +127,30 @@ void *dataDump()
                 }
             } if(i <= MAXPORTS && udata->dport_l.len > 0) continue;
 
-            putchar('\n');
-
             switch(iph->protocol){
-                case IPPROTO_TCP:       printf("[TCP]\n");
-                                        printf("[ip]saddr: %s:%d\n", inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(tcph->source));
-                                        printf("[ip]daddr: %s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(tcph->dest));
-                                        break;
-                case IPPROTO_UDP:       printf("[UDP]\n");	
-                                        printf("[ip]saddr: %s:%d\n", inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(udph->source));
-                                        printf("[ip]daddr: %s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(udph->dest));
-                                        break;
-                case IPPROTO_ICMP:      printf("[ICMP]\n");
-                                        printf("[ip]saddr: %s\n", inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)));
-                                        printf("[ip]daddr: %s\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)));
-                                        break;
-                case IPPROTO_IGMP:      printf("[IGMP]\n");
-                                        printf("[ip]saddr: %s\n", inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)));
-                                        printf("[ip]daddr: %s\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)));
-                                        break;
-                default:                break;
+                case IPPROTO_TCP:   printf("\n[ip]: protocol:0x%02x (%d TCP)\n",iph->protocol, (int)iph->protocol);
+                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(tcph->source));
+                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(tcph->dest));
+                                    break;
+
+
+                case IPPROTO_UDP:   printf("\n[ip]: protocol:0x%02x (%d UDP)\n",iph->protocol, (int)iph->protocol);
+                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(tcph->source));
+                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(tcph->dest));
+                                    break;
+
+
+                case IPPROTO_ICMP:  printf("\n[ip]: protocol:0x%02x (%d ICMP)\n",iph->protocol, (int)iph->protocol);
+                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(tcph->source));
+                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(tcph->dest));
+                                    break;
+
+                case IPPROTO_IGMP:  printf("\n[ip]: protocol:0x%02x (%d IGMP)\n",iph->protocol, (int)iph->protocol);
+                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(tcph->source));
+                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(tcph->dest));
+                                    break;
+                default:            break;
             }
-
-
-
-            if(sizeof(buff) <= BUFFSIZE)
-                showHex(socksize, sizeof(struct ethhdr), (char*)&buff, (char*)&data);
         }
     }
 }

@@ -1,10 +1,10 @@
 /*
- * ipVerb.c
+ * ipReg.c
  *
-*/
-#include "../main.h"
+*/ 
+#include "main.h"
 
-void *ipVerb()
+void *ipReg()
 {
     struct  iphdr       *iph;
     struct  tcphdr      *tcph;
@@ -14,9 +14,9 @@ void *ipVerb()
     struct  sockaddr_in sin;
     struct  user_data   *udata;
 
-    socklen_t       sock, socksize;
+    socklen_t   sock, socksize;
     unsigned int    len;
-    char            buff[BUFFSIZE], str[INET_ADDRSTRLEN];
+    char buff[BUFFSIZE], str[INET_ADDRSTRLEN];
     const char      *data;
     register long   i;
 
@@ -41,10 +41,10 @@ void *ipVerb()
         if(socksize > 0)
         {
             iph = (struct iphdr *)(buff + sizeof(struct ethhdr));
-            tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-            udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-            icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-            igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
+            udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
+            icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
+            igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
 
             switch(iph->protocol)
             {
@@ -69,7 +69,7 @@ void *ipVerb()
                 if(udata->ipsrc_l.len > 0)
                 {
                     if(!strcmp( inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),udata->ipsrc_l.ips[i]))
-                    {
+                    { 
                         i = MAXIPS + 1;
                         break;
                     }
@@ -89,7 +89,7 @@ void *ipVerb()
 
             } if(i <= MAXIPS && udata->ipdst_l.len > 0) continue;
 
-            for(i=0; i< udata->sport_l.len && i < MAXPORTS; i++) 
+            for(i=0; i< udata->sport_l.len && i < MAXPORTS; i++)
             {
                 if(udata->sport_l.len > 0)
                 {
@@ -204,17 +204,12 @@ void *ipVerb()
                                     printf("checksum:0x%04x ",iph->check & 0xffff);
                                     printf("ttl:%d\n",(int)iph->ttl);
                                     printf("[igmp]: type:%u ",igmph->igmp_type);
-                                    printf("code:%u ",igmph->igmp_code);
+                                    printf("code:%u ",igmph->igmp_code); 
                                     printf("checksum:0x%04x\n",igmph->igmp_cksum & 0xffff);
                                     break;
 
                 default:            break;
 
-            }
-
-            if(sizeof(buff) <= BUFFSIZE)
-            {
-                showHex(socksize, sizeof(struct ethhdr), (char*)&buff, (char*)&data);
             }
         }
     }

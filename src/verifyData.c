@@ -2,7 +2,7 @@
  * verifyData.c
  */
 
-#include "../main.h"
+#include "main.h"
 
 void verifyData(unsigned int c, void *t)
 {

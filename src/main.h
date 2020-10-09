@@ -22,7 +22,7 @@
 #include <arpa/inet.h>
 #include <signal.h>
 
-#include "./misc/str.h"
+#include "str.h"
 
 
 void programUsage(char *name);

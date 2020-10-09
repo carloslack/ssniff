@@ -6,6 +6,9 @@
 
 #include "setIface.h"
 
+char *giface;
+unsigned int iface_is_set = 0;
+
 void setIface(const char *ifC)
 {
     if(strlen(ifC)>DEVLEN)
@@ -19,7 +22,7 @@ void setIface(const char *ifC)
     const char *iiface = ifC;
     iiface = ifC;
     giface = (char*)ifC;
-    on = 1;
+    iface_is_set = 1;
 
     if((sock = socket(PF_PACKET,SOCK_RAW,htons(ETH_P_ALL)))<0){
         fprintf(stderr,"%d:setIface():%s\n",__LINE__,strerror(errno));
@@ -95,7 +98,7 @@ void Iface(char **iface, void *which)
 
 void bye()
 {
-    if(on)
+    if(iface_is_set)
         Iface(NULL,0);
     else
         exit(EXIT_SUCCESS);

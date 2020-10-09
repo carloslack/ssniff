@@ -2,6 +2,9 @@
  * main.h
  */
 
+#ifndef MAIN_H
+#define MAIN_H
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -83,4 +86,4 @@ struct user_data
     unsigned int        vhex;
 };struct user_data  user_data_t;
 
-
+#endif

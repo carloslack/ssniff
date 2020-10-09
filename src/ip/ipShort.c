@@ -41,10 +41,10 @@ void *ipShort()
         if(socksize > 0)
         {
             iph = (struct iphdr *)(buff + sizeof(struct ethhdr));
-            tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
-            udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
-            icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
-            igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
+            tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
 
             switch(iph->protocol)
             {

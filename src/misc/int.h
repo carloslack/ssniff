@@ -7,10 +7,10 @@
 
 typedef enum 
 {
-	INT_OK,
-	INT_OVERFLOW,
-	INT_UNDERFLOW,
-	INT_NULLPTR
+    INT_OK,
+    INT_OVERFLOW,
+    INT_UNDERFLOW,
+    INT_NULLPTR
 } int_rt;
 
 typedef unsigned int    ui_t;

@@ -42,12 +42,12 @@ void *macSniff() {
             arp = (struct arphdr *)(buff + sizeof(struct ethhdr));
 
             printf("\n[eth]h_dest: %02X:%02X:%02X:%02X:%02X:%02X\n",
-                    eth->h_dest[0],     
-                    eth->h_dest[1],     
-                    eth->h_dest[2],    
-                    eth->h_dest[3],     
-                    eth->h_dest[4],     
-                    eth->h_dest[5]);   
+                    eth->h_dest[0],
+                    eth->h_dest[1],
+                    eth->h_dest[2],
+                    eth->h_dest[3],
+                    eth->h_dest[4],
+                    eth->h_dest[5]);
             printf("[eth]h_source: %02X:%02X:%02X:%02X:%02X:%02X\n",
                     eth->h_source[0],
                     eth->h_source[1],

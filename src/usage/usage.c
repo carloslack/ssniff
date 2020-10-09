@@ -25,6 +25,5 @@ void programUsage(char *name)
     printf("--short:\t\tShow basic packet header information\n");
     printf("--verbose:\t\tShow complete packet header information plus hexdump-like data dumping\n");
     exit(EXIT_SUCCESS);
-}    
+}
 
-    

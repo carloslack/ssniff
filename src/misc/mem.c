@@ -17,55 +17,55 @@
 static const char rcsid[] = "$Id$";
 #endif /* lint */
 
-void* m_alloc(size_t n, void (*errf)(int)) 
+void* m_alloc(size_t n, void (*errf)(int))
 { 
-	void *p = malloc(n);
+    void *p = malloc(n);
 
-	if(n == 0 || p == NULL) 
-	{
-		errno = (!n) ? EINVAL : ENOMEM;
-		perror("m_alloc");
-		if(errf) errf(EXIT_FAILURE);
-		return NULL;
-	} 
+    if(n == 0 || p == NULL)
+    {
+        errno = (!n) ? EINVAL : ENOMEM;
+        perror("m_alloc");
+        if(errf) errf(EXIT_FAILURE);
+        return NULL;
+    }
 
-	return p;
+    return p;
 }
 
-void* c_alloc(size_t n, size_t m, void (*errf)(int)) 
+void* c_alloc(size_t n, size_t m, void (*errf)(int))
 {
-	void *p = NULL;
-	errno = 0;
-	
-	if(mul_ui(n, m, NULL) != INT_OK) 
-		errno = EOVERFLOW;
-	
-	p = calloc(n,m);  
+    void *p = NULL;
+    errno = 0;
 
-	if(n == 0 || p == NULL)
-		errno = (!n) ? EINVAL : ENOMEM;
+    if(mul_ui(n, m, NULL) != INT_OK)
+        errno = EOVERFLOW;
 
-	if(errno) 
-	{
-		perror("c_alloc");
-		if(errf) errf(EXIT_FAILURE);
-		return NULL;
-	}
+    p = calloc(n,m);
 
-return p;
+    if(n == 0 || p == NULL)
+        errno = (!n) ? EINVAL : ENOMEM;
+
+    if(errno)
+    {
+        perror("c_alloc");
+        if(errf) errf(EXIT_FAILURE);
+        return NULL;
+    }
+
+    return p;
 }
 
-void m_free(void **ptr) 
+void m_free(void **ptr)
 {
-	if(ptr)
-			free(*ptr),
-	*ptr = NULL;
+    if(ptr)
+        free(*ptr),
+            *ptr = NULL;
 }
 
-void s_free(void **ptr, size_t n) 
+void s_free(void **ptr, size_t n)
 {
-	if(ptr && *ptr)
-		memset(*ptr, 0x0, n);
-	m_free(ptr);
+    if(ptr && *ptr)
+        memset(*ptr, 0x0, n);
+    m_free(ptr);
 }
 

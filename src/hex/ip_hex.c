@@ -4,7 +4,10 @@
  * Dump packet buffer in hexdump-like format
  */
 
-#include "ip_hex.h"
+#include <stdio.h>
+#include <ctype.h>
+
+#define DUMPLEN 16
 
 void ipHexdump(const char *buff, size_t len) 
 {
@@ -14,7 +17,7 @@ void ipHexdump(const char *buff, size_t len)
     unsigned int count = 1;
 
     printf("\n%08x  ", line);
-    
+
     if(len<=8192)
     {
         while(pos<len)
@@ -26,14 +29,14 @@ void ipHexdump(const char *buff, size_t len)
             }else if( count==DUMPLEN)
             {
                 unsigned int log;
-            
-                printf("|"); 
-    
+
+                printf("|");
+
                 if(pos>=DUMPLEN)
                     log=pos-DUMPLEN;
                 else
                     log=pos;
-                    
+
                 for(;log<pos;log++)
                     (isalnum( buff[log])||isgraph( buff[log]))?printf("%c",buff[log]):printf(".");
 
@@ -52,7 +55,7 @@ void ipHexdump(const char *buff, size_t len)
                 printf("\x20\x20\x20");
             printf("|");
             for(;x<len;x++)
-                (isalnum( buff[x])||isgraph( buff[x]))?printf("%c",buff[x]):printf(".");                
+                (isalnum( buff[x])||isgraph( buff[x]))?printf("%c",buff[x]):printf(".");
             puts("|");
         }
         printf("%08x\n",line+=--count);
@@ -61,7 +64,7 @@ void ipHexdump(const char *buff, size_t len)
 
 void showHex(int socksize, int ethsize, char *buff, const char *data)
 {
-	data = (const char *)(buff + 40 + ethsize);
-	ipHexdump(data,socksize-40-ethsize);
+    data = (const char *)(buff + 40 + ethsize);
+    ipHexdump(data,socksize-40-ethsize);
 }
 

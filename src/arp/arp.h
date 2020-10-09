@@ -16,7 +16,7 @@
 #include <net/if.h>
 #include <ctype.h>
 #include <errno.h>
-    
+
 #define DEVICE  "eth0"
 
 enum {

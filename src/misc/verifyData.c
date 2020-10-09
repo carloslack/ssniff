@@ -5,7 +5,7 @@
 #include "../main.h"
 
 void verifyData(unsigned int c, void *t)
-{   
+{
     iplist_t        *ips;
     maclist_t       *macs;
     portlist_t      *ports;
@@ -19,7 +19,7 @@ void verifyData(unsigned int c, void *t)
                     {
                         puts("Invalid IP address");
                         abort();
-                    } 
+                    }
                 }
                 break;
         case 1: ports = (portlist_t*)t;
@@ -40,8 +40,8 @@ void verifyData(unsigned int c, void *t)
                 break;
         case 3: macs = (maclist_t*)t;
                 for(i = 0; i < macs->len; i++) 
-                {  
-                    if(macs->macs[i] == NULL || strlen(macs->macs[i])>MACLENGTH) 
+                {
+                    if(macs->macs[i] == NULL || strlen(macs->macs[i])>MACLENGTH)
                     {
                         puts("Invalid MAC address");
                         abort();

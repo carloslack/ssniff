@@ -15,9 +15,9 @@
 static const char rcsid[] = "$Id$";
 #endif /* lint */
 
-int strcnt(const char *p, char c) 
+int strcnt(const char *p, char c)
 {
-	const char  *q = p;
+    const char  *q = p;
     int         n = 0;
 
     if(!p) return -1;
@@ -37,7 +37,7 @@ char **strsplt(const char *ptr, char c)
         return NULL;
 
     if(k == 0) 
-	{
+    {
         toks = malloc(sizeof(char*));
         *toks = strdup(ptr);
         return toks;
@@ -49,16 +49,16 @@ char **strsplt(const char *ptr, char c)
         return NULL;
 
     for(q=t=p; q && *q != '\0'; q++)
-	{
+    {
         if(*q == c)
-		{
-         	*q = '\0'; k = strlen(t);
+        {
+            *q = '\0'; k = strlen(t);
             *(toks+i) = m_alloc(k+1, exit);
             strlcpy((*toks+i++), t, k+1);
             t = q+1;
         } 
-		else if(*(q+1) == '\0') 
-		{
+        else if(*(q+1) == '\0') 
+        {
             k = strlen(t);
             *(toks+i) = m_alloc(k+1, exit);
             strlcpy(*(toks+i++), t, k+1);
@@ -85,9 +85,9 @@ strlcat(char *dst, const char *src, size_t siz){
         return(dlen + strlen(s));
 
     while(*s != '\0')
-	{
-     	if(n != 1)
-		{
+    {
+        if(n != 1)
+        {
             *d++ = *s;
             n--;
         }
@@ -101,21 +101,21 @@ strlcat(char *dst, const char *src, size_t siz){
 size_t
 strlcpy(char *dst, const char *src, size_t siz)
 {
-	char        *d = dst;
+    char        *d = dst;
     const char  *s = src;
     size_t      n = siz;
 
     if(n != 0)
-	{
+    {
         while(--n != 0)
-		{
+        {
             if ((*d++ = *s++) == '\0')
                 break;
         }
     }
 
     if (n == 0)
-	{
+    {
         if(siz != 0)
             *d = '\0';
 

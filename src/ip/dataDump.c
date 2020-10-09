@@ -1,24 +1,24 @@
 /*
  * dataDump.c
  *
-*/ 
+*/
 #include "../main.h"
 
 void *dataDump()
 {
     struct  iphdr       *iph;
-    struct  tcphdr		*tcph;
+    struct  tcphdr      *tcph;
     struct  udphdr      *udph;
     struct  icmphdr     *icmph;
     struct  igmp        *igmph;
-    struct  sockaddr_in	sin;
+    struct  sockaddr_in sin;
     struct  user_data   *udata;
 
-    socklen_t		sock, socksize;
-    unsigned int	len;
-    char 			buff[BUFFSIZE], str[INET_ADDRSTRLEN];
+    socklen_t       sock, socksize;
+    unsigned int    len;
+    char            buff[BUFFSIZE], str[INET_ADDRSTRLEN];
     const char      *data;
-    register long	i;
+    register long   i;
 
     len = sizeof(sin);
     data = NULL;

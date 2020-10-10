@@ -2,15 +2,14 @@
  * ipShort.c
  *
 */
-#include "main.h"
+#include "proto.h"
+
+extern void ssniff_log(loglevel_e, struct buffer_hdr *);
 
 void *ipShort()
 {
-    struct  iphdr       *iph;
-    struct  tcphdr      *tcph;
-    struct  udphdr      *udph;
-    struct  icmphdr     *icmph;
-    struct  igmp        *igmph;
+    struct buffer_hdr bufhdr;
+
     struct  sockaddr_in	sin;
     struct  user_data   *udata;
 
@@ -38,15 +37,15 @@ void *ipShort()
             exit(EXIT_FAILURE);
         }
 
+        memset(&bufhdr, 0, sizeof(struct buffer_hdr));
+
         if(socksize > 0)
         {
-            iph = (struct iphdr *)(buff + sizeof(struct ethhdr));
-            tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-            udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-            icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-            igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            bufhdr.iph = (struct iphdr *)(buff + sizeof(struct ethhdr));
+            bufhdr.tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+            bufhdr.udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
 
-            switch(iph->protocol)
+            switch(bufhdr.iph->protocol)
             {
                 case IPPROTO_TCP:   break;
                 case IPPROTO_UDP:   break;
@@ -55,9 +54,10 @@ void *ipShort()
                 default:            continue;
             }
 
+            // TODO: Fix all this mess
             if(udata->protocol)
             {
-                if(iph->protocol != udata->protocol)
+                if(bufhdr.iph->protocol != udata->protocol)
                     continue;
             }else{
                 udata->srcport = 0;
@@ -68,7 +68,7 @@ void *ipShort()
             {
                 if(udata->ipsrc_l.len > 0)
                 {
-                    if(strcmp( inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),udata->ipsrc_l.ips[i]))
+                    if(strcmp( inet_ntop(AF_INET,&bufhdr.iph->saddr,str,sizeof(str)),udata->ipsrc_l.ips[i]))
                     {
                         i = MAXIPS + 1;
                         break;
@@ -80,7 +80,7 @@ void *ipShort()
             {
                 if(udata->ipdst_l.len > 0)
                 {
-                    if(!strcmp( inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),udata->ipdst_l.ips[i]))
+                    if(!strcmp( inet_ntop(AF_INET,&bufhdr.iph->daddr,str,sizeof(str)),udata->ipdst_l.ips[i]))
                     {
                         i = MAXIPS + 1;
                         break;
@@ -95,10 +95,10 @@ void *ipShort()
                 {
                     switch(udata->protocol)
                     {
-                        case IPPROTO_TCP:   if(htons(tcph->source) != atoi(udata->sport_l.ports[i]))
+                        case IPPROTO_TCP:   if(htons(bufhdr.tcph->source) != atoi(udata->sport_l.ports[i]))
                                                 continue;
                                             break;
-                        case IPPROTO_UDP:   if(htons(udph->source) != atoi(udata->sport_l.ports[i]))
+                        case IPPROTO_UDP:   if(htons(bufhdr.udph->source) != atoi(udata->sport_l.ports[i]))
                                                 continue;
                                             break;
                         default:            break;
@@ -114,10 +114,10 @@ void *ipShort()
                 {
                     switch(udata->protocol)
                     {
-                        case IPPROTO_TCP:   if(htons(tcph->dest) != atoi(udata->dport_l.ports[i]))
+                        case IPPROTO_TCP:   if(htons(bufhdr.tcph->dest) != atoi(udata->dport_l.ports[i]))
                                                 continue;
                                             break;
-                        case IPPROTO_UDP:   if(htons(udph->dest) != atoi(udata->dport_l.ports[i]))
+                        case IPPROTO_UDP:   if(htons(bufhdr.udph->dest) != atoi(udata->dport_l.ports[i]))
                                                 continue;
                                             break;
                         default:            break;
@@ -127,30 +127,8 @@ void *ipShort()
                 }
             } if(i <= MAXPORTS && udata->dport_l.len > 0) continue;
 
-            switch(iph->protocol){
-                case IPPROTO_TCP:   printf("\n[ip]: protocol:0x%02x (%d TCP)\n",iph->protocol, (int)iph->protocol);
-                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(tcph->source));
-                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(tcph->dest));
-                                    break;
-
-
-                case IPPROTO_UDP:   printf("\n[ip]: protocol:0x%02x (%d UDP)\n",iph->protocol, (int)iph->protocol);
-                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(tcph->source));
-                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(tcph->dest));
-                                    break;
-
-
-                case IPPROTO_ICMP:  printf("\n[ip]: protocol:0x%02x (%d ICMP)\n",iph->protocol, (int)iph->protocol);
-                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(tcph->source));
-                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(tcph->dest));
-                                    break;
-
-                case IPPROTO_IGMP:  printf("\n[ip]: protocol:0x%02x (%d IGMP)\n",iph->protocol, (int)iph->protocol);
-                                    printf("[ip]: source:%s:%d\n",inet_ntop(AF_INET,&iph->saddr,str,sizeof(str)),htons(tcph->source));
-                                    printf("[ip]: destination:%s:%d\n",inet_ntop(AF_INET,&iph->daddr,str,sizeof(str)),htons(tcph->dest));
-                                    break;
-                default:            break;
-            }
+            //here
+            ssniff_log(0, &bufhdr);
         }
     }
 }

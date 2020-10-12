@@ -2,7 +2,7 @@
  * ipVerb.c
  *
 */
-#include "main.h"
+#include "ssniff.h"
 
 void *ipVerb()
 {

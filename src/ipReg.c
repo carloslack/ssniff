@@ -2,7 +2,7 @@
  * ipReg.c
  *
 */ 
-#include "main.h"
+#include "ssniff.h"
 
 void *ipReg()
 {

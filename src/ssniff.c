@@ -7,7 +7,7 @@
  *
 */ 
 #include <getopt.h>
-#include "main.h"
+#include "ssniff.h"
 
 int main(int argc, char **argv)
 {

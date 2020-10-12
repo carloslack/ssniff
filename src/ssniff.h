@@ -1,5 +1,5 @@
 /*
- * main.h
+ * ssniff.h
  */
 
 #ifndef MAIN_H

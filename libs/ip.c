@@ -8,7 +8,6 @@ extern void ssniff_log(loglevel_e, struct buffer_hdr *);
 
 void *ipShort()
 {
-    struct buffer_hdr bufhdr;
 
     struct  sockaddr_in	sin;
     struct  user_data   *udata;
@@ -30,104 +29,40 @@ void *ipShort()
 
     memset(buff,'\0',sizeof(buff));
 
-    while(1)
+    for(;;)
     {
+        struct buffer_hdr bufhdr = {0};
         if((socksize = recvfrom(sock,buff,sizeof(buff),0,(struct sockaddr *)&sin,&len)) == -1){
             fprintf(stderr,"%d:ipSniff():%s\n",__LINE__,strerror(errno));
             exit(EXIT_FAILURE);
         }
 
-        memset(&bufhdr, 0, sizeof(struct buffer_hdr));
 
         if(socksize > 0)
         {
             bufhdr.iph = (struct iphdr *)(buff + sizeof(struct ethhdr));
-            bufhdr.tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-            bufhdr.udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+
+            if (udata->protocol && udata->protocol != bufhdr.iph->protocol)
+                continue;
 
             switch(bufhdr.iph->protocol)
             {
-                case IPPROTO_TCP:   break;
-                case IPPROTO_UDP:   break;
-                case IPPROTO_ICMP:  break;
-                case IPPROTO_IGMP:  break;
-                default:            continue;
-            }
-
-            // TODO: Fix all this mess
-            if(udata->protocol)
-            {
-                if(bufhdr.iph->protocol != udata->protocol)
+                case IPPROTO_TCP:
+                    break;
+                case IPPROTO_UDP:
+                    bufhdr.udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    break;
+                case IPPROTO_ICMP:
+                    bufhdr.icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    break;
+                case IPPROTO_IGMP:
+                    bufhdr.igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    break;
+                default:
                     continue;
-            }else{
-                udata->srcport = 0;
-                udata->dstport = 0;
             }
 
-            for(i=0; i < udata->ipsrc_l.len && i < MAXIPS; i++)
-            {
-                if(udata->ipsrc_l.len > 0)
-                {
-                    if(strcmp( inet_ntop(AF_INET,&bufhdr.iph->saddr,str,sizeof(str)),udata->ipsrc_l.ips[i]))
-                    {
-                        i = MAXIPS + 1;
-                        break;
-                    }
-                }
-            } if(i <= MAXIPS && udata->ipsrc_l.len > 0) continue;
-
-            for(i=0; i< udata->ipdst_l.len && i < MAXIPS; i++) 
-            {
-                if(udata->ipdst_l.len > 0)
-                {
-                    if(!strcmp( inet_ntop(AF_INET,&bufhdr.iph->daddr,str,sizeof(str)),udata->ipdst_l.ips[i]))
-                    {
-                        i = MAXIPS + 1;
-                        break;
-                    }
-                }
-
-            } if(i <= MAXIPS && udata->ipdst_l.len > 0) continue;
-
-            for(i=0; i< udata->sport_l.len && i < MAXPORTS; i++)
-            {
-                if(udata->sport_l.len > 0)
-                {
-                    switch(udata->protocol)
-                    {
-                        case IPPROTO_TCP:   if(htons(bufhdr.tcph->source) != atoi(udata->sport_l.ports[i]))
-                                                continue;
-                                            break;
-                        case IPPROTO_UDP:   if(htons(bufhdr.udph->source) != atoi(udata->sport_l.ports[i]))
-                                                continue;
-                                            break;
-                        default:            break;
-                    }
-                    i = MAXPORTS + 1;
-                    break;
-                }
-            } if(i <= MAXPORTS && udata->sport_l.len > 0) continue;
-
-            for(i=0; i< udata->dport_l.len && i < MAXPORTS; i++)
-            {
-                if(udata->dport_l.len > 0)
-                {
-                    switch(udata->protocol)
-                    {
-                        case IPPROTO_TCP:   if(htons(bufhdr.tcph->dest) != atoi(udata->dport_l.ports[i]))
-                                                continue;
-                                            break;
-                        case IPPROTO_UDP:   if(htons(bufhdr.udph->dest) != atoi(udata->dport_l.ports[i]))
-                                                continue;
-                                            break;
-                        default:            break;
-                    }
-                    i = MAXPORTS + 1;
-                    break;
-                }
-            } if(i <= MAXPORTS && udata->dport_l.len > 0) continue;
-
-            //here
+            bufhdr.tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
             ssniff_log(0, &bufhdr);
         }
     }

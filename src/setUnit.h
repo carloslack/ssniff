@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ssniff.h"
 
 void setProto(char *proto);
 void setIp(char *ip, int sd);

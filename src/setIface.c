@@ -4,7 +4,18 @@
  * Set/unset the promisc flag on selected interface
  */
 
-#include "setIface.h"
+#include <stdio.h>
+#include <sys/socket.h>
+#include <netinet/ip.h>
+#include <errno.h>
+#include <linux/if.h>
+#include <linux/if_ether.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <string.h>
+
+#define DEVLEN  5
 
 char *giface;
 unsigned int iface_is_set = 0;
@@ -83,11 +94,11 @@ void *quitNow()
 
 void Iface(char **iface, void *which)
 {
-    int x = (int)which;
+    unsigned long x = (unsigned long)which;
 
     switch(x)
     {
-        case 1:	
+        case 1:
             setIface((char*)iface);
             break;
 

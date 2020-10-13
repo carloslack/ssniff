@@ -2,6 +2,7 @@
  * ipShort.c
  *
 */
+#include "ssniff.h"
 #include "proto.h"
 
 extern void ssniff_log(loglevel_e, struct buffer_hdr *);
@@ -14,12 +15,9 @@ void *ipShort()
 
     socklen_t       sock, socksize;
     unsigned int    len;
-    char            buff[BUFFSIZE], str[INET_ADDRSTRLEN];
-    const char      *data;
-    register long   i;
+    char            buff[BUFFSIZE] = {0};
 
     len = sizeof(sin);
-    data = NULL;
     udata = &user_data_t;
 
     if((sock = socket(PF_PACKET,SOCK_RAW,htons(ETH_P_ALL))) == -1){
@@ -62,8 +60,13 @@ void *ipShort()
                     continue;
             }
 
+            //const char      *data = NULL;
+            //if(sizeof(buff) <= BUFFSIZE)
+            //{
+            //    showHex(socksize, sizeof(struct ethhdr), (char*)&buff, (char*)&data);
+            //}
             bufhdr.tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-            ssniff_log(0, &bufhdr);
+            ssniff_log(socksize, &bufhdr);
         }
     }
 }

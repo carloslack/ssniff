@@ -12,7 +12,7 @@
 void ipHexdump(const char *buff, size_t len) 
 {
     unsigned int pos = 0;
-    unsigned int line;
+    unsigned int line = 0;
     unsigned int x = 0;
     unsigned int count = 1;
 

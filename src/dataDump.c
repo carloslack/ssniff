@@ -2,7 +2,8 @@
  * dataDump.c
  *
 */
-#include "main.h"
+#include "ssniff.h"
+#include "proto.h"
 
 void *dataDump()
 {
@@ -23,6 +24,7 @@ void *dataDump()
     len = sizeof(sin);
     data = NULL;
     udata = &user_data_t;
+
 
     if((sock = socket(PF_PACKET,SOCK_RAW,htons(ETH_P_ALL))) == -1){
         fprintf(stderr,"%d:ipSniff():%s\n",__LINE__,strerror(errno));
@@ -45,6 +47,10 @@ void *dataDump()
             udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
             icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
             igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr)); 
+
+            //FIXME
+            (void)icmph;
+            (void)igmph;
 
             switch(iph->protocol)
             {

@@ -5,6 +5,8 @@
  */
 
 #include "setUnit.h"
+#include "ssniff.h"
+#include "proto.h"
 
 void setProto(char *proto)
 {

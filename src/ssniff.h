@@ -1,9 +1,7 @@
+#pragma once
 /*
- * main.h
+ * ssniff.h
  */
-
-#ifndef MAIN_H
-#define MAIN_H
 
 #include <stdio.h>
 #include <unistd.h>
@@ -28,7 +26,6 @@
 void programUsage(char *name);
 void *ipReg();
 void *ipShort();
-void *ipVerb();
 void *dataDump();
 void *macSniff();
 void *quitNow();
@@ -39,19 +36,6 @@ void showHex(int socksize, int ethsize, char *buff, const char *data);
 void bye();
 
 #define CTRL_C_HANDLER     signal(SIGINT,(void*)bye);
-
-enum
-{
-    MIN_PORT=1,
-    MAX_PORT=65535,
-    BUFFSIZE=8092,
-    IPLENGTH=15,
-    PORTLENGTH=5,
-    MACLENGTH=17,
-    MAXMACS=16,
-    MAXIPS=16,
-    MAXPORTS=16
-};
 
 typedef struct ip_list
 {
@@ -86,4 +70,3 @@ struct user_data
     unsigned int        vhex;
 };struct user_data  user_data_t;
 
-#endif

@@ -2,7 +2,8 @@
  * verifyData.c
  */
 
-#include "main.h"
+#include "ssniff.h"
+#include "proto.h"
 
 void verifyData(unsigned int c, void *t)
 {

@@ -1,72 +1,72 @@
 /*
- * ipShort.c
+ * ip.c
  *
 */
+#include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <net/ethernet.h>
+#include <arpa/inet.h>
+#include <netinet/ip.h>
 #include "ssniff.h"
 #include "proto.h"
 
-extern void ssniff_log(loglevel_e, struct buffer_hdr *);
+#define BUFFSIZE 8092
 
-void *ipShort()
+//extern void ssniff_log(ssize_t len, struct buffer_hdr *);
+
+void *ssniff_start(int flags)
 {
-
-    struct  sockaddr_in	sin;
-    struct  user_data   *udata;
-
-    socklen_t       sock, socksize;
-    unsigned int    len;
-    char            buff[BUFFSIZE] = {0};
-
-    len = sizeof(sin);
-    udata = &user_data_t;
+    int sock;
+    struct sockaddr_in sin;
+    unsigned int len = sizeof(sin);
 
     if((sock = socket(PF_PACKET,SOCK_RAW,htons(ETH_P_ALL))) == -1){
-        fprintf(stderr,"%d:ipSniff():%s\n",__LINE__,strerror(errno));
+        fprintf(stderr,"socket: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-
-    memset(buff,'\0',sizeof(buff));
 
     for(;;)
     {
         struct buffer_hdr bufhdr = {0};
+        char buff[BUFFSIZE] = {0};
+        ssize_t socksize;
         if((socksize = recvfrom(sock,buff,sizeof(buff),0,(struct sockaddr *)&sin,&len)) == -1){
-            fprintf(stderr,"%d:ipSniff():%s\n",__LINE__,strerror(errno));
+            fprintf(stderr,"recvfrom: %s\n", strerror(errno));
             exit(EXIT_FAILURE);
         }
 
-
         if(socksize > 0)
         {
-            bufhdr.iph = (struct iphdr *)(buff + sizeof(struct ethhdr));
-
-            if (udata->protocol && udata->protocol != bufhdr.iph->protocol)
-                continue;
-
-            switch(bufhdr.iph->protocol)
+            bufhdr.eth = (struct ethhdr *)buff;
+            if ((flags & FILTER_ARP) && ntohs(bufhdr.eth->h_proto) == ETH_P_ARP)
             {
-                case IPPROTO_TCP:
-                    break;
-                case IPPROTO_UDP:
+                bufhdr.arp = (struct arphdr *)(buff + sizeof(struct ethhdr));
+                ssniff_log(socksize, &bufhdr);
+            } else {
+                bufhdr.iph = (struct iphdr *)(buff + sizeof(struct ethhdr));
+                if ((flags & FILTER_TCP) && IPPROTO_TCP == bufhdr.iph->protocol)
+                {
+                    bufhdr.tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    ssniff_log(socksize, &bufhdr);
+                }
+                else if ((flags & FILTER_UDP) && IPPROTO_UDP == bufhdr.iph->protocol)
+                {
                     bufhdr.udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-                    break;
-                case IPPROTO_ICMP:
+                    ssniff_log(socksize, &bufhdr);
+                }
+                else if ((flags & FILTER_ICMP) && IPPROTO_ICMP == bufhdr.iph->protocol)
+                {
                     bufhdr.icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-                    break;
-                case IPPROTO_IGMP:
-                    bufhdr.igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-                    break;
-                default:
-                    continue;
+                    ssniff_log(socksize, &bufhdr);
+                }
+                else if ((flags & FILTER_IGMP) && IPPROTO_IGMP == bufhdr.iph->protocol)
+                {
+                    bufhdr.icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    ssniff_log(socksize, &bufhdr);
+                }
             }
-
-            //const char      *data = NULL;
-            //if(sizeof(buff) <= BUFFSIZE)
-            //{
-            //    showHex(socksize, sizeof(struct ethhdr), (char*)&buff, (char*)&data);
-            //}
-            bufhdr.tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-            ssniff_log(socksize, &bufhdr);
         }
     }
 }

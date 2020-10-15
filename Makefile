@@ -7,7 +7,7 @@ SRCDIR=./src
 LIBSDIR=./libs
 SRCS=$(wildcard $(SRCDIR)/*.c)
 OBJS=$(SRCS:.c=.o)
-CFLAGS=-I$(SRCDIR) -Wall -g -ggdb
+CFLAGS=-I$(SRCDIR) -Wall
 CC=$(shell which gcc)
 
 

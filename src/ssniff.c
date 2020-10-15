@@ -6,23 +6,15 @@
  * set tabstop=4
  *
 */ 
-#include <getopt.h>
-#include "ssniff.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "proto.h"
+#include "ssniff.h"
 
-void programUsage(char *name)
+static void help(char *name)
 {
-    printf("Use: %s [ --help | --dump | --short | --verbose ] [ rule:option ]\n",name);
-    printf("iface:interface\t\tLocal interface to set promisc\n");
-    printf("proto:arp\t\tArp protocol\n");
-    printf("proto:icmp\t\tIcmp protocol\n");
-    printf("proto:igmp\t\tIgmp protocol\n");
-    printf("proto:tcp\t\tTcp protocol\n");
-    printf("proto:udp\t\tUdp protocol\n");
-    printf("src:[ip,ip..]\t\tSource IP[s]\n");
-    printf("dst:[ip,ip..]\t\tDestination IP[s]\n");
-    printf("sport:[port,port..]\tSource port *ignored if proto != TCP || proto != UDP\n");
-    printf("dport:[port,port..]\tDestination port *ignored if proto != TCP || proto != UDP\n");
+    printf("Use: %s <tcp udp icmp igmp arp>\n",name);
     printf("--help:\t\t\tPrint this help\n");
     printf("--dump:\t\t\tShow very basic packet header information plus hexdump-like data dumping\n");
     exit(EXIT_SUCCESS);
@@ -31,55 +23,31 @@ void programUsage(char *name)
 
 int main(int argc, char **argv)
 {
-    struct  user_data   *udata;
-    udata = &user_data_t;
+    int flags = 0;
 
-    int c;
-    int option_index = 0;
-    unsigned int who = 0;
-    static int verbose_flag;
-
-    while(1)
-    {
-        static struct option long_options[]=
+    for (int i = 1; i < argc; ++i) {
+        if (!strncasecmp(argv[i], "all", 3))
         {
-            {"help", no_argument, &verbose_flag, 0},
-            {"dump", no_argument, &verbose_flag, 2},
-            {NULL,0,0,0}
-        };
-
-        c = getopt_long(argc, argv, "", long_options, &option_index);
-
-        if(c == -1)
+            flags |= FILTER_TCP | FILTER_UDP |
+                FILTER_ICMP | FILTER_IGMP | FILTER_ARP;
             break;
-
-        switch(verbose_flag)
-        {
-            case 0:     programUsage(argv[0]);
-                        break;
-            case 1:     who = 1;
-                        break;
-            default:    who = 0;
-                        break;
         }
+        if (!strncasecmp(argv[i], "tcp", 3))
+            flags |= FILTER_TCP;
+        if (!strncasecmp(argv[i], "udp", 3))
+            flags |= FILTER_UDP;
+        if (!strncasecmp(argv[i], "icmp", 4))
+            flags |= FILTER_ICMP;
+        if (!strncasecmp(argv[i], "igmp", 4))
+            flags |= FILTER_IGMP;
+        if (!strncasecmp(argv[i], "arp", 3))
+            flags |= FILTER_ARP;
     }
 
-    CTRL_C_HANDLER
+    if (!flags)
+        help(argv[0]);
 
-        stripInput(argv);
+    ssniff_start(flags);
 
-    if(udata->arp)
-    {
-        macSniff();
-    }else{
-        switch(who)
-        {
-            case 0: ipShort();
-                    break;
-            case 1: dataDump();
-                    break;
-            default:break;
-        }
-    }
     return 0;
 }

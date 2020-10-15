@@ -9,17 +9,14 @@
 
 #define DUMPLEN 16
 
-void ipHexdump(const char *buff, size_t len) 
+static void _hexdump(const char *buff, size_t len) 
 {
-    unsigned int pos = 0;
-    unsigned int line = 0;
-    unsigned int x = 0;
-    unsigned int count = 1;
-
-    printf("\n%08x  ", line);
-
     if(len<=8192)
     {
+        unsigned int x = 0, pos = 0, count = 1;
+        unsigned int line = 0;
+
+        printf("\n%08x  ", line);
         while(pos<len)
         {
             printf("%02x ",buff[pos++] &0xff);
@@ -62,9 +59,9 @@ void ipHexdump(const char *buff, size_t len)
     }
 }
 
-void showHex(int socksize, int ethsize, char *buff, const char *data)
+void __attribute__((unused))ssniff_hexdump(int socksize, int ethsize, char *buff)
 {
-    data = (const char *)(buff + 40 + ethsize);
-    ipHexdump(data,socksize-40-ethsize);
+    const char *data = (const char *)(buff + 40 + ethsize);
+    _hexdump(data,socksize-40-ethsize);
 }
 

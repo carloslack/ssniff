@@ -196,7 +196,7 @@ void ssniff_log(ssize_t len, struct buffer_hdr *hdr)
 
             fprintf(stdout, "\tihl %u, version %u, tos 0x%02x, len %u, id %u, frag off %u, chksum 0x%04x ttl %d\n",
                     hdr->iph->ihl, hdr->iph->version, hdr->iph->tos, ntohs(hdr->iph->tot_len),
-                    ntohs(hdr->iph->id), hdr->iph->frag_off, hdr->iph->check & 0xFFFF, hdr->iph->ttl);
+                    ntohs(hdr->iph->id), hdr->iph->frag_off, ntohs(hdr->iph->check) & 0xFFFF, hdr->iph->ttl);
 
             fprintf(stdout, "\t%s source %02X:%02X:%02X:%02X:%02X:%02X, destination %02X:%02X:%02X:%02X:%02X:%02X\n",
                     translate_arp_id(ntohs(hdr->eth->h_proto)),
@@ -206,19 +206,19 @@ void ssniff_log(ssize_t len, struct buffer_hdr *hdr)
                 struct  tcphdr  *tcp = hdr->tcph;
                 fprintf(stdout, "\tsource port %d, dest port %d, seq %d, ack seq %d, res1 %u, doff %u, fin %u, syn %u, rst %u, psh %u, ack %u, urg %u, res2 %u, window %u, chksum 0x%04x, urg ptr %u\n",
                         ntohs(tcp->source), ntohs(tcp->dest), ntohs(tcp->seq), ntohs(tcp->ack_seq), tcp->res1, tcp->doff,
-                        tcp->fin, tcp->syn, tcp->rst, tcp->psh, tcp->ack, tcp->urg, tcp->res2, ntohs(tcp->window), tcp->check & 0xFFFF, tcp->urg_ptr);
+                        tcp->fin, tcp->syn, tcp->rst, tcp->psh, tcp->ack, tcp->urg, tcp->res2, ntohs(tcp->window), ntohs(tcp->check) & 0xFFFF, tcp->urg_ptr);
             } else if (hdr->udph) {
                 struct  udphdr  *udp = hdr->udph;
                 fprintf(stdout, "\tsource port %u, dest port %u, len %u, chksum 0x%04x\n",
-                        ntohs(udp->source), ntohs(udp->dest), ntohs(udp->len), udp->check & 0xFFFF);
+                        ntohs(udp->source), ntohs(udp->dest), ntohs(udp->len), ntohs(udp->check) & 0xFFFF);
             } else if (hdr->icmph) {
                 struct  icmphdr  *icmp = hdr->icmph;
                 fprintf(stdout, "\ttype %u, code %u, chksum 0%04x, id %u sequence %u\n",
-                        icmp->type, icmp->code, icmp->checksum & 0xFFFF, ntohs(icmp->un.echo.id), ntohs(icmp->un.echo.sequence));
+                        icmp->type, icmp->code, ntohs(icmp->checksum) & 0xFFFF, ntohs(icmp->un.echo.id), ntohs(icmp->un.echo.sequence));
             } else if (hdr->igmph) {
                 struct  igmp  *igmp = hdr->igmph;
                 fprintf(stdout, "\ttype %u, code %u, chksum 0x%04x\n",
-                        igmp->igmp_type, igmp->igmp_code, igmp->igmp_cksum & 0xFFFF);
+                        igmp->igmp_type, igmp->igmp_code, ntohs(igmp->igmp_cksum) & 0xFFFF);
             }
 
         }

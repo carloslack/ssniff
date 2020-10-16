@@ -14,8 +14,6 @@
 
 #define BUFFSIZE 8092
 
-//extern void ssniff_log(ssize_t len, struct buffer_hdr *);
-
 void *ssniff_start(int flags)
 {
     int sock;
@@ -63,7 +61,7 @@ void *ssniff_start(int flags)
                 }
                 else if ((flags & FILTER_IGMP) && IPPROTO_IGMP == bufhdr.iph->protocol)
                 {
-                    bufhdr.icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    bufhdr.igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     ssniff_log(socksize, &bufhdr);
                 }
             }

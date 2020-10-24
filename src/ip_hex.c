@@ -59,9 +59,15 @@ static void _hexdump(const char *buff, size_t len)
     }
 }
 
+// TODO: remove this
 void __attribute__((unused))ssniff_hexdump(int socksize, int ethsize, char *buff)
 {
     const char *data = (const char *)(buff + 40 + ethsize);
     _hexdump(data,socksize-40-ethsize);
+}
+
+void ssniff_payload(char *buff, int len)
+{
+    _hexdump(buff, len);
 }
 

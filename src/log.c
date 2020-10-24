@@ -179,12 +179,6 @@ void ssniff_log(ssize_t len, struct buffer_hdr *hdr)
     unsigned char src[ETH_ALEN] = {0};
     unsigned char dst[ETH_ALEN] = {0};
 
-    /**
-     * TODO: print data, something like:
-     *       if(sizeof(buff) <= BUFFSIZE)
-     *           showHex(socksize, sizeof(struct ethhdr), (char*)&buff);
-     */
-
     if (hdr && hdr->iph) {
         if (_ssniff_unwrap_iph(hdr, &unwrap)) {
             memcpy(src, hdr->eth->h_source, ETH_ALEN);
@@ -209,12 +203,20 @@ void ssniff_log(ssize_t len, struct buffer_hdr *hdr)
                         tcp->fin, tcp->syn, tcp->rst, tcp->psh, tcp->ack, tcp->urg, tcp->res2, ntohs(tcp->window), ntohs(tcp->check) & 0xFFFF, tcp->urg_ptr);
             } else if (hdr->udph) {
                 struct  udphdr  *udp = hdr->udph;
+                /* Paylad size */
+                uint16_t plen = ntohs(udp->len);
                 fprintf(stdout, "\tsource port %u, dest port %u, len %u, chksum 0x%04x\n",
-                        ntohs(udp->source), ntohs(udp->dest), ntohs(udp->len), ntohs(udp->check) & 0xFFFF);
+                        ntohs(udp->source), ntohs(udp->dest), plen, ntohs(udp->check) & 0xFFFF);
+                if (hdr->raw)
+                    ssniff_payload(hdr->raw+UDPLEN, plen-UDPLEN);
+
             } else if (hdr->icmph) {
+                uint16_t plen = ntohs(hdr->iph->tot_len) - (IPLEN+ICMPLEN);
                 struct  icmphdr  *icmp = hdr->icmph;
-                fprintf(stdout, "\ttype %u, code %u, chksum 0%04x, id %u sequence %u\n",
-                        icmp->type, icmp->code, ntohs(icmp->checksum) & 0xFFFF, ntohs(icmp->un.echo.id), ntohs(icmp->un.echo.sequence));
+                fprintf(stdout, "\ttype %u, code %u, chksum 0%04x, id %u sequence %u ===%d\n",
+                        icmp->type, icmp->code, ntohs(icmp->checksum) & 0xFFFF, ntohs(icmp->un.echo.id), ntohs(icmp->un.echo.sequence), sizeof(struct iphdr)+ICMPLEN);
+                if (hdr->raw && plen)
+                    ssniff_payload(hdr->raw+UDPLEN, plen);
             } else if (hdr->igmph) {
                 struct  igmp  *igmp = hdr->igmph;
                 fprintf(stdout, "\ttype %u, code %u, chksum 0x%04x\n",

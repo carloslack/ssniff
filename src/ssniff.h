@@ -6,6 +6,7 @@
 struct buffer_hdr;
 void *ssniff_start(int);
 void ssniff_hexdump(int, int, char *, const char *);
+void ssniff_payload(char *buff, int len);
 void ssniff_log(ssize_t len, struct buffer_hdr *);
 
 enum {

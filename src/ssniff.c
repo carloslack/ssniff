@@ -15,8 +15,6 @@
 static void help(char *name)
 {
     printf("Use: %s <tcp udp icmp igmp arp>\n",name);
-    printf("--help:\t\t\tPrint this help\n");
-    printf("--dump:\t\t\tShow very basic packet header information plus hexdump-like data dumping\n");
     exit(EXIT_SUCCESS);
 }
 

@@ -9,56 +9,54 @@
 
 #define DUMPLEN 16
 
-static void _hexdump(const char *buff, size_t len) {
-    if(len<=8192) {
-        unsigned int x = 0, pos = 0, count = 1;
-        unsigned int line = 0;
+static void _hexdump(unsigned char * data, size_t len)
+{
+    /*
+    * Copyright (C) 1998  Mark Baysinger (mbaysing@ucsd.edu)
+    * Copyright (C) 1998,1999  Ross Combs (rocombs@cs.nmsu.edu)
+    */
+    unsigned int i;
+    size_t r,c;
 
-        printf("\n%08x  ", line);
-        while(pos<len)
-        {
-            printf("%02x ",buff[pos++] &0xff);
-            if( count==DUMPLEN/2)
-            {
-                putchar('\x20');
-            }else if( count==DUMPLEN)
-            {
-                unsigned int log;
+    if (!data)
+        return;
 
-                printf("|");
+    for (r=0,i=0; r<(len/16+(len%16!=0)); r++,i+=16)
+    {
+        printf("\t%04X:   ",i); /* location of first byte in line */
 
-                if(pos>=DUMPLEN)
-                    log=pos-DUMPLEN;
+        for (c=i; c<i+8; c++) /* left half of hex dump */
+            if (c<len)
+                printf("%02X ",((unsigned char const *)data)[c]);
+            else
+                printf("   "); /* pad if short line */
+
+        printf("  ");
+
+        for (c=i+8; c<i+16; c++) /* right half of hex dump */
+            if (c<len)
+                printf("%02X ",((unsigned char const *)data)[c]);
+            else
+                printf("   "); /* pad if short line */
+
+        printf("   ");
+
+        for (c=i; c<i+16; c++) /* ASCII dump */
+            if (c<len)
+                if (((unsigned char const *)data)[c]>=32 &&
+                        ((unsigned char const *)data)[c]<127)
+                    printf("%c",((char const *)data)[c]);
                 else
-                    log=pos;
+                    printf("."); /* put this for non-printables */
+            else
+                printf(" "); /* pad if short line */
 
-                for(;log<pos;log++)
-                    (isalnum( buff[log])||isgraph( buff[log]))?printf("%c",buff[log]):printf(".");
-
-                puts("|");
-                printf("%08x  ",line+=DUMPLEN);
-
-                if(pos>(len-DUMPLEN))
-                    x = pos;
-                count = 0;
-            }
-            count++;
-        }
-        if(len!=x)
-        {
-            for(;(pos-x)<DUMPLEN;pos++)
-                printf("\x20\x20\x20");
-            printf("|");
-            for(;x<len;x++)
-                (isalnum( buff[x])||isgraph( buff[x]))?printf("%c",buff[x]):printf(".");
-            puts("|");
-        }
-        printf("%08x\n",line+=--count);
+        printf("\n");
     }
 }
 
 void ssniff_payload(char *buff, int len)
 {
-    _hexdump(buff, len);
+    _hexdump((unsigned char*)buff, len);
 }
 

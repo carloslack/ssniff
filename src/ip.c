@@ -51,16 +51,19 @@ void *ssniff_start(int flags)
                 }
                 else if ((flags & FILTER_UDP) && IPPROTO_UDP == bufhdr.iph->protocol)
                 {
-                    bufhdr.udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    bufhdr.udph = (struct udphdr *)bufhdr.raw;
                     ssniff_log(socksize, &bufhdr);
                 }
                 else if ((flags & FILTER_ICMP) && IPPROTO_ICMP == bufhdr.iph->protocol)
                 {
+                    bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     bufhdr.icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     ssniff_log(socksize, &bufhdr);
                 }
                 else if ((flags & FILTER_IGMP) && IPPROTO_IGMP == bufhdr.iph->protocol)
                 {
+                    bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     bufhdr.igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     ssniff_log(socksize, &bufhdr);
                 }

@@ -9,10 +9,8 @@
 
 #define DUMPLEN 16
 
-static void _hexdump(const char *buff, size_t len) 
-{
-    if(len<=8192)
-    {
+static void _hexdump(const char *buff, size_t len) {
+    if(len<=8192) {
         unsigned int x = 0, pos = 0, count = 1;
         unsigned int line = 0;
 
@@ -59,9 +57,8 @@ static void _hexdump(const char *buff, size_t len)
     }
 }
 
-void __attribute__((unused))ssniff_hexdump(int socksize, int ethsize, char *buff)
+void ssniff_payload(char *buff, int len)
 {
-    const char *data = (const char *)(buff + 40 + ethsize);
-    _hexdump(data,socksize-40-ethsize);
+    _hexdump(buff, len);
 }
 

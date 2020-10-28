@@ -4,9 +4,11 @@
  * ssniff.h
  */
 
+#define IPLEN sizeof(struct iphdr)
 #define UDPLEN sizeof(struct udphdr)
 #define ICMPLEN sizeof(struct icmphdr)
-#define IPLEN sizeof(struct iphdr)
+#define IGMPLEN sizeof(struct igmp)
+
 struct buffer_hdr {
     struct  iphdr   *iph;
     struct  tcphdr  *tcph;

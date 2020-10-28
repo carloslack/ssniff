@@ -11,6 +11,7 @@
 #include <net/if_arp.h>
 #include <net/ethernet.h>
 #include <arpa/inet.h>
+#include "ssniff.h"
 #include "proto.h"
 
 /**
@@ -213,16 +214,18 @@ void ssniff_log(ssize_t len, struct buffer_hdr *hdr)
             } else if (hdr->icmph) {
                 uint16_t plen = ntohs(hdr->iph->tot_len) - (IPLEN+ICMPLEN);
                 struct  icmphdr  *icmp = hdr->icmph;
-                fprintf(stdout, "\ttype %u, code %u, chksum 0%04x, id %u sequence %u ===%d\n",
-                        icmp->type, icmp->code, ntohs(icmp->checksum) & 0xFFFF, ntohs(icmp->un.echo.id), ntohs(icmp->un.echo.sequence), sizeof(struct iphdr)+ICMPLEN);
+                fprintf(stdout, "\ttype %u, code %u, chksum 0%04x, id %u sequence %u\n",
+                        icmp->type, icmp->code, ntohs(icmp->checksum) & 0xFFFF, ntohs(icmp->un.echo.id), ntohs(icmp->un.echo.sequence));
                 if (hdr->raw && plen)
                     ssniff_payload(hdr->raw+UDPLEN, plen);
             } else if (hdr->igmph) {
+                uint16_t plen = ntohs(hdr->iph->tot_len) - (IPLEN+IGMPLEN);
                 struct  igmp  *igmp = hdr->igmph;
-                fprintf(stdout, "\ttype %u, code %u, chksum 0x%04x\n",
-                        igmp->igmp_type, igmp->igmp_code, ntohs(igmp->igmp_cksum) & 0xFFFF);
+                fprintf(stdout, "\ttype %u, code %u, chksum 0x%04x group %s\n",
+                        igmp->igmp_type, igmp->igmp_code, ntohs(igmp->igmp_cksum) & 0xFFFF, inet_ntoa(igmp->igmp_group));
+                if (hdr->raw && plen)
+                    ssniff_payload(hdr->raw+IGMPLEN, plen);
             }
-
         }
     }
     // Ethernet

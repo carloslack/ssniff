@@ -63,6 +63,7 @@ void *ssniff_start(int flags)
                 }
                 else if ((flags & FILTER_IGMP) && IPPROTO_IGMP == bufhdr.iph->protocol)
                 {
+                    bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     bufhdr.igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     ssniff_log(socksize, &bufhdr);
                 }

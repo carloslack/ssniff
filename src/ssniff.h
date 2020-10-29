@@ -3,12 +3,11 @@
  * ssniff.h
  */
 
-#include <stdbool.h>
 struct buffer_hdr;
 void *ssniff_start(int);
 void ssniff_hexdump(int, int, char *, const char *);
 void ssniff_payload(char *buff, int len);
-void ssniff_log(ssize_t len, struct buffer_hdr *, bool verbose);
+void ssniff_log(ssize_t len, struct buffer_hdr *);
 
 enum {
     FILTER_TCP = 1,

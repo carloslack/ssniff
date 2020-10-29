@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <net/ethernet.h>
 #include <arpa/inet.h>
@@ -42,31 +43,34 @@ void *ssniff_start(int flags)
             if ((flags & FILTER_ARP) && ntohs(bufhdr.eth->h_proto) == ETH_P_ARP)
             {
                 bufhdr.arp = (struct arphdr *)(buff + sizeof(struct ethhdr));
-                ssniff_log(socksize, &bufhdr, false /* not available */);
+                ssniff_log(socksize, &bufhdr);
             } else {
                 bufhdr.iph = (struct iphdr *)(buff + sizeof(struct ethhdr));
                 if ((flags & FILTER_TCP) && IPPROTO_TCP == bufhdr.iph->protocol)
                 {
                     bufhdr.tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-                    ssniff_log(socksize, &bufhdr, false);
+                    ssniff_log(socksize, &bufhdr);
                 }
                 else if ((flags & FILTER_UDP) && IPPROTO_UDP == bufhdr.iph->protocol)
                 {
-                    bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-                    bufhdr.udph = (struct udphdr *)bufhdr.raw;
-                    ssniff_log(socksize, &bufhdr, verbose);
+                    if (verbose)
+                        bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    bufhdr.udph = (struct udphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    ssniff_log(socksize, &bufhdr);
                 }
                 else if ((flags & FILTER_ICMP) && IPPROTO_ICMP == bufhdr.iph->protocol)
                 {
-                    bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    if (verbose)
+                        bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     bufhdr.icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-                    ssniff_log(socksize, &bufhdr, verbose);
+                    ssniff_log(socksize, &bufhdr);
                 }
                 else if ((flags & FILTER_IGMP) && IPPROTO_IGMP == bufhdr.iph->protocol)
                 {
-                    bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
+                    if (verbose)
+                        bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     bufhdr.igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-                    ssniff_log(socksize, &bufhdr, verbose);
+                    ssniff_log(socksize, &bufhdr);
                 }
             }
         }

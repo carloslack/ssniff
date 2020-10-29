@@ -19,6 +19,7 @@ void *ssniff_start(int flags)
     int sock;
     struct sockaddr_in sin;
     unsigned int len = sizeof(sin);
+    bool verbose = flags & FILTER_VERBOSE;
 
     if((sock = socket(PF_PACKET,SOCK_RAW,htons(ETH_P_ALL))) == -1){
         fprintf(stderr,"socket: %s\n", strerror(errno));
@@ -41,31 +42,31 @@ void *ssniff_start(int flags)
             if ((flags & FILTER_ARP) && ntohs(bufhdr.eth->h_proto) == ETH_P_ARP)
             {
                 bufhdr.arp = (struct arphdr *)(buff + sizeof(struct ethhdr));
-                ssniff_log(socksize, &bufhdr);
+                ssniff_log(socksize, &bufhdr, false /* not available */);
             } else {
                 bufhdr.iph = (struct iphdr *)(buff + sizeof(struct ethhdr));
                 if ((flags & FILTER_TCP) && IPPROTO_TCP == bufhdr.iph->protocol)
                 {
                     bufhdr.tcph = (struct tcphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-                    ssniff_log(socksize, &bufhdr);
+                    ssniff_log(socksize, &bufhdr, false);
                 }
                 else if ((flags & FILTER_UDP) && IPPROTO_UDP == bufhdr.iph->protocol)
                 {
                     bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     bufhdr.udph = (struct udphdr *)bufhdr.raw;
-                    ssniff_log(socksize, &bufhdr);
+                    ssniff_log(socksize, &bufhdr, verbose);
                 }
                 else if ((flags & FILTER_ICMP) && IPPROTO_ICMP == bufhdr.iph->protocol)
                 {
                     bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     bufhdr.icmph = (struct icmphdr *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-                    ssniff_log(socksize, &bufhdr);
+                    ssniff_log(socksize, &bufhdr, verbose);
                 }
                 else if ((flags & FILTER_IGMP) && IPPROTO_IGMP == bufhdr.iph->protocol)
                 {
                     bufhdr.raw = (buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
                     bufhdr.igmph = (struct igmp *)(buff + sizeof(struct iphdr) + sizeof(struct ethhdr));
-                    ssniff_log(socksize, &bufhdr);
+                    ssniff_log(socksize, &bufhdr, verbose);
                 }
             }
         }

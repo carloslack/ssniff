@@ -16,11 +16,11 @@
 
 static void help(char *name)
 {
-    fprintf(stdout, "Usage: [SV=1] %s <all | arp tcp udp icmp igmp>\n",name);
-    fprintf(stdout, " SV:  environment variable indicates to hexdump data payloads\n");
+    fprintf(stdout, "Usage: [SDEBUG=1] %s <all | arp tcp udp icmp igmp>\n",name);
+    fprintf(stdout, " SDEBUG:  environment variable indicates to hexdump data payloads\n");
     fprintf(stdout, " all: filter all available protocols\n");
     fprintf(stdout, " arp, tcp, udp, icmp, igmp: filter correspondent protocol(s)\n");
-    fprintf(stdout, "E.g.: \n\t# SV=1 ./ssniff tcp udp icmp\n");
+    fprintf(stdout, "E.g.: \n SDEBUG=1 ./ssniff tcp udp icmp\n");
     exit(EXIT_SUCCESS);
 }
 
@@ -55,10 +55,9 @@ int main(int argc, char **argv)
      * Verbose flag: currently only available for:
      *  icmp, udp, igmp
      */
-    char *v = getenv("SV");
+    char *v = getenv("SDEBUG");
     if (v && (atoi(v) == 1))
         flags |= FILTER_VERBOSE;
-    printf("%d\n", flags & FILTER_VERBOSE);
 
     // never returns
     ssniff_start(flags);

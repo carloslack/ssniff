@@ -174,7 +174,7 @@ static bool _ssniff_unwrap_iph(const struct buffer_hdr *hdr, struct proto_unwrap
     return true;
 }
 
-void ssniff_log(ssize_t len, struct buffer_hdr *hdr, bool verbose)
+void ssniff_log(ssize_t len, struct buffer_hdr *hdr)
 {
     struct proto_unwrap unwrap = {0};
     unsigned char src[ETH_ALEN] = {0};
@@ -208,7 +208,7 @@ void ssniff_log(ssize_t len, struct buffer_hdr *hdr, bool verbose)
                 uint16_t plen = ntohs(udp->len);
                 fprintf(stdout, "\tsource port %u, dest port %u, len %u, chksum 0x%04x\n",
                         ntohs(udp->source), ntohs(udp->dest), plen, ntohs(udp->check) & 0xFFFF);
-                if (verbose && hdr->raw)
+                if (hdr->raw)
                     ssniff_payload(hdr->raw+UDPLEN, plen-UDPLEN);
 
             } else if (hdr->icmph) {
@@ -216,14 +216,14 @@ void ssniff_log(ssize_t len, struct buffer_hdr *hdr, bool verbose)
                 struct  icmphdr  *icmp = hdr->icmph;
                 fprintf(stdout, "\ttype %u, code %u, chksum 0%04x, id %u sequence %u\n",
                         icmp->type, icmp->code, ntohs(icmp->checksum) & 0xFFFF, ntohs(icmp->un.echo.id), ntohs(icmp->un.echo.sequence));
-                if (verbose && hdr->raw && plen)
+                if (hdr->raw && plen)
                     ssniff_payload(hdr->raw+UDPLEN, plen);
             } else if (hdr->igmph) {
                 uint16_t plen = ntohs(hdr->iph->tot_len) - (IPLEN+IGMPLEN);
                 struct  igmp  *igmp = hdr->igmph;
                 fprintf(stdout, "\ttype %u, code %u, chksum 0x%04x group %s\n",
                         igmp->igmp_type, igmp->igmp_code, ntohs(igmp->igmp_cksum) & 0xFFFF, inet_ntoa(igmp->igmp_group));
-                if (verbose && hdr->raw && plen)
+                if (hdr->raw && plen)
                     ssniff_payload(hdr->raw+IGMPLEN, plen);
             }
         }

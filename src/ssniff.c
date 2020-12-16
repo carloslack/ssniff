@@ -16,8 +16,7 @@
 
 static void help(char *name)
 {
-    fprintf(stdout, "Usage: [SDEBUG=1] %s <all | arp tcp udp icmp igmp> [--verbose]\n",name);
-    fprintf(stdout, " SDEBUG:  environment variable indicates to hexdump data payloads\n");
+    fprintf(stdout, "Usage: %s <all | arp tcp udp icmp igmp> [--verbose]\n",name);
     fprintf(stdout, " all: filter all available protocols\n");
     fprintf(stdout, " arp, tcp, udp, icmp, igmp: filter correspondent protocol(s)\n");
     fprintf(stdout, "E.g.: \n ./ssniff tcp udp icmp --verbose\n");

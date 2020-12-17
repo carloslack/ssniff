@@ -3,7 +3,6 @@
  *
  * Dump packet buffer in hexdump-like format
  */
-
 #include <stdio.h>
 #include <ctype.h>
 

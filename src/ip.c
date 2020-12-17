@@ -15,7 +15,7 @@
 
 #define BUFFSIZE 8092
 
-void *ssniff_start(int flags)
+void *ssniff_start(char flags)
 {
     int sock;
     struct sockaddr_in sin;

@@ -26,13 +26,12 @@ static void help(char *name)
 
 int main(int argc, char **argv)
 {
-    int flags = 0;
+    char flags = 0;
 
     for (int i = 1; i < argc; ++i) {
         if (!strcmp(argv[i], "--verbose"))
             flags |= FILTER_VERBOSE;
-        if (!strncasecmp(argv[i], "all", 3))
-        {
+        if (!strncasecmp(argv[i], "all", 3)) {
             flags |= FILTER_TCP | FILTER_UDP |
                 FILTER_ICMP | FILTER_IGMP | FILTER_ARP;
         } else {

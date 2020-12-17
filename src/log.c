@@ -167,7 +167,7 @@ static bool _ssniff_unwrap_iph(const struct buffer_hdr *hdr, struct proto_unwrap
             (*ret).protocol_name = "IGMP";
             break;
         default:
-            (*ret).protocol_name = "UNKNOWN";
+            (*ret).protocol_name = "Unhandled";
             break;
     }
 

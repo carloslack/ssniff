@@ -9,7 +9,7 @@
 
 #define DUMPLEN 16
 
-static void _hexdump(unsigned char * data, size_t len)
+void ssniff_payload(unsigned char * data, size_t len)
 {
     /*
     * Copyright (C) 1998  Mark Baysinger (mbaysing@ucsd.edu)
@@ -53,10 +53,5 @@ static void _hexdump(unsigned char * data, size_t len)
 
         printf("\n");
     }
-}
-
-void ssniff_payload(char *buff, int len)
-{
-    _hexdump((unsigned char*)buff, len);
 }
 

@@ -101,7 +101,7 @@ static packet_descriptors_t arp_protocol_opcodes[]=
 };
 
 /**
- * These helpers iterate through descriptors
+ * These helpers iterate over descriptors
  * and return some human readable string
  * For now I'll keep them brief
  */
@@ -167,7 +167,7 @@ static bool _ssniff_unwrap_iph(const struct buffer_hdr *hdr, struct proto_unwrap
             (*ret).protocol_name = "IGMP";
             break;
         default:
-            (*ret).protocol_name = "UNKNOWN";
+            (*ret).protocol_name = "Unhandled";
             break;
     }
 

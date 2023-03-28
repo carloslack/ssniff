@@ -101,7 +101,7 @@ static packet_descriptors_t arp_protocol_opcodes[]=
 };
 
 /**
- * These helpers iterate through descriptors
+ * These helpers iterate over descriptors
  * and return some human readable string
  * For now I'll keep them brief
  */
